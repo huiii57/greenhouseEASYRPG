@@ -12,7 +12,13 @@ export default function GreenhouseScene({ onOpenModal }) {
       style={{ '--scene-width': `${SCENE_WIDTH}px`, '--scene-height': `${SCENE_HEIGHT}px` }}
     >
       <div className="scene-canvas" style={{ aspectRatio: `${SCENE_WIDTH} / ${SCENE_HEIGHT}` }}>
-        <img src={backgroundImage} alt="溫室公會大廳" className="scene-bg" draggable={false} />
+        {backgroundImage ? (
+          <img src={backgroundImage} alt="溫室公會大廳" className="scene-bg" draggable={false} />
+        ) : (
+          <div className="scene-bg scene-bg--placeholder">
+            背景圖尚未放入（請放到 src/assets/background/greenhouse-bg.png）
+          </div>
+        )}
 
         {objectsLayout.map((obj) => {
           if (obj.kind === 'modal') {

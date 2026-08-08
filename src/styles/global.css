@@ -144,6 +144,31 @@ button {
   pointer-events: none;
 }
 
+.scene-bg--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  color: var(--color-wood-dark);
+  font-size: 14px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(139, 101, 68, 0.12),
+    rgba(139, 101, 68, 0.12) 10px,
+    rgba(139, 101, 68, 0.05) 10px,
+    rgba(139, 101, 68, 0.05) 20px
+  );
+}
+
+.pot-widget__error {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--color-danger);
+  max-width: 160px;
+  text-align: center;
+}
+
 /* ---------- 可互動物件 ---------- */
 
 .interactive-object {

@@ -6,6 +6,7 @@ export default function Pot({ layout }) {
   const [count, setCount] = useState(0);
   const [wateredToday, setWateredToday] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     potApi
@@ -14,17 +15,20 @@ export default function Pot({ layout }) {
         setCount(res.count);
         setWateredToday(res.wateredToday);
       })
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
   async function handleWater() {
     if (wateredToday || loading) return;
     setLoading(true);
+    setError('');
     try {
       const res = await potApi.water();
       setCount(res.count);
       setWateredToday(res.wateredToday);
     } catch (err) {
+      setError(err.message);
       alert(`澆水失敗：${err.message}`);
     } finally {
       setLoading(false);
@@ -32,6 +36,7 @@ export default function Pot({ layout }) {
   }
 
   const { label, image, top, left, width } = layout;
+  const showPlaceholder = !image || imgError;
 
   return (
     <div className="pot-widget" style={{ top, left, width }}>
@@ -43,7 +48,7 @@ export default function Pot({ layout }) {
         aria-label={label}
         disabled={wateredToday || loading}
       >
-        {!imgError ? (
+        {!showPlaceholder ? (
           <img src={image} alt={label} className="interactive-object__img" onError={() => setImgError(true)} draggable={false} />
         ) : (
           <div className="interactive-object__placeholder">{label}</div>
@@ -56,6 +61,7 @@ export default function Pot({ layout }) {
         <span className="pot-widget__drop">💧</span>
         <span>累計澆水 {count} 次</span>
       </div>
+      {error && <div className="pot-widget__error">{error}</div>}
     </div>
   );
 }

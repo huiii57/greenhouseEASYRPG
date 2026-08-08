@@ -4,19 +4,45 @@
 //
 // 座標系統：畫布固定尺寸 1600 x 900（見 GreenhouseScene.jsx 的 SCENE_WIDTH/HEIGHT）。
 // top / left / width 都是相對於這個畫布的像素值。
-// image 路徑先指向 /src/assets/objects/ 底下的檔名，等你把素材放進去就會自動顯示；
-// 在放入素材之前，畫面會顯示一個標示名稱的暫用色塊，方便你先確認位置對不對。
+//
+// 重要：圖片路徑不能用純字串寫死（例如 '/src/assets/objects/xxx.png'），
+// 因為正式 build 之後 dist/ 裡不會有 src/ 資料夾，字串路徑在正式站會 404。
+// 這裡改用 Vite 的 import.meta.glob，讓 Vite 在 build 時真正把這些圖片
+// 打包進 dist/assets/ 並算出正確的最終網址，開發環境與正式環境都能正常顯示。
+// 如果檔案還沒放進資料夾，resolveObjectImage 會回傳 null，
+// 元件會自動顯示暫用色塊，行為跟之前一樣。
+
+const objectImageModules = import.meta.glob('/src/assets/objects/*.{png,PNG}', {
+  eager: true,
+  import: 'default'
+});
+
+const backgroundImageModules = import.meta.glob('/src/assets/background/*.{png,PNG}', {
+  eager: true,
+  import: 'default'
+});
+
+function resolveObjectImage(filename) {
+  const path = `/src/assets/objects/${filename}`;
+  return objectImageModules[path] || null;
+}
+
+function resolveBackgroundImage(filename) {
+  const path = `/src/assets/background/${filename}`;
+  return backgroundImageModules[path] || null;
+}
 
 export const SCENE_WIDTH = 1600;
 export const SCENE_HEIGHT = 900;
 
-export const backgroundImage = '/src/assets/background/greenhouse-bg.png';
+// 背景圖檔名請放在 src/assets/background/greenhouse-bg.png
+export const backgroundImage = resolveBackgroundImage('greenhouse-bg.png');
 
 export const objectsLayout = [
   {
     id: 'skincareBox',
     label: '保養品儲物箱',
-    image: '/src/assets/objects/skincare-box.png',
+    image: resolveObjectImage('skincare-box.png'),
     top: 480,
     left: 160,
     width: 170,
@@ -26,7 +52,7 @@ export const objectsLayout = [
   {
     id: 'cosmeticsBox',
     label: '化妝品儲物箱',
-    image: '/src/assets/objects/cosmetics-box.png',
+    image: resolveObjectImage('cosmetics-box.png'),
     top: 480,
     left: 360,
     width: 170,
@@ -36,7 +62,7 @@ export const objectsLayout = [
   {
     id: 'noticeBoard',
     label: '公會布告欄',
-    image: '/src/assets/objects/notice-board.png',
+    image: resolveObjectImage('notice-board.png'),
     top: 120,
     left: 680,
     width: 220,
@@ -46,7 +72,7 @@ export const objectsLayout = [
   {
     id: 'bookshelf',
     label: '書櫃',
-    image: '/src/assets/objects/bookshelf.png',
+    image: resolveObjectImage('bookshelf.png'),
     top: 100,
     left: 980,
     width: 200,
@@ -56,7 +82,7 @@ export const objectsLayout = [
   {
     id: 'studyDesk',
     label: '研究桌：星辰卷軸',
-    image: '/src/assets/objects/study-desk.png',
+    image: resolveObjectImage('study-desk.png'),
     top: 520,
     left: 880,
     width: 240,
@@ -66,7 +92,7 @@ export const objectsLayout = [
   {
     id: 'glassCabinet',
     label: '烘焙玻璃櫥櫃：交易市場',
-    image: '/src/assets/objects/glass-cabinet.png',
+    image: resolveObjectImage('glass-cabinet.png'),
     top: 460,
     left: 1180,
     width: 230,
@@ -76,7 +102,7 @@ export const objectsLayout = [
   {
     id: 'pot',
     label: '白色小盆栽',
-    image: '/src/assets/objects/pot.png',
+    image: resolveObjectImage('pot.png'),
     top: 700,
     left: 90,
     width: 110,
@@ -86,7 +112,7 @@ export const objectsLayout = [
   {
     id: 'cat',
     label: '黑白賓士貓',
-    image: '/src/assets/objects/cat.png',
+    image: resolveObjectImage('cat.png'),
     top: 640,
     left: 1350,
     width: 150,

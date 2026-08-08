@@ -3,10 +3,11 @@ import { useState } from 'react';
 // 所有家具共用同一個互動外框：
 // - hover 時發光 + 微放大 + 顯示提示文字
 // - 點擊時觸發 onActivate
-// - 圖片還沒準備好時，用色塊 + 標籤頂替，方便先確認排版位置
+// - image 為 null（檔案還沒放進資料夾）或載入失敗時，用色塊 + 標籤頂替
 export default function InteractiveObject({ layout, onActivate, children }) {
   const [imgError, setImgError] = useState(false);
   const { label, image, top, left, width } = layout;
+  const showPlaceholder = !image || imgError;
 
   return (
     <button
@@ -16,7 +17,7 @@ export default function InteractiveObject({ layout, onActivate, children }) {
       onClick={() => onActivate(layout)}
       aria-label={label}
     >
-      {!imgError ? (
+      {!showPlaceholder ? (
         <img
           src={image}
           alt={label}

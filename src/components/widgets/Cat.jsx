@@ -21,6 +21,7 @@ export default function Cat({ layout }) {
   }
 
   const { label, image, top, left, width } = layout;
+  const showPlaceholder = !image || imgError;
 
   return (
     <div className="cat-widget" style={{ top, left, width }}>
@@ -32,7 +33,7 @@ export default function Cat({ layout }) {
         onClick={handleClick}
         aria-label={label}
       >
-        {!imgError ? (
+        {!showPlaceholder ? (
           <img src={image} alt={label} className="interactive-object__img" onError={() => setImgError(true)} draggable={false} />
         ) : (
           <div className="interactive-object__placeholder">{label}</div>
