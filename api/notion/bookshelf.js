@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       const p = page.properties;
       return {
         id: page.id,
-        Name: getTitle(p['Name']),
+        Name: getTitle(p['任務']),
         State: getSelect(p['State']),
         date: getDate(p['日期'] ?? p['Date'])
       };
