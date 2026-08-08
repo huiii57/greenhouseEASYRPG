@@ -43,7 +43,7 @@ async function handleGet(req, res) {
       const p = page.properties;
       const item = {
         id: page.id,
-        Name: getTitle(p['Name']),
+        Name: getTitle(p['任務']),
         EXP: getNumber(p['EXP']),
         Done: getCheckbox(p['Done']),
         date: getDate(p['日期'] ?? p['Date'])
