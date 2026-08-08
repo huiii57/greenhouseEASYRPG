@@ -1,5 +1,6 @@
 import { readBlocksAsText, replaceBlocksWithText } from '../_lib/blocks.js';
 import { requireAuth } from '../_lib/session.js';
+import { sendError } from '../_lib/errors.js';
 
 // 書櫃內文讀取／編輯（GET ?pageId=xxx, PATCH {pageId, content}）
 
@@ -25,8 +26,7 @@ async function handleGet(req, res) {
     const content = await readBlocksAsText(pageId);
     res.status(200).json({ content });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '讀取內文失敗' });
+    sendError(res, 500, err, '讀取內文失敗');
   }
 }
 
@@ -40,7 +40,6 @@ async function handlePatch(req, res) {
     await replaceBlocksWithText(pageId, content || '');
     res.status(200).json({ success: true });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '更新內文失敗' });
+    sendError(res, 500, err, '更新內文失敗');
   }
 }

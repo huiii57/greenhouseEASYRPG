@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { buildLoginCookie } from '../_lib/session.js';
+import { sendError } from '../_lib/errors.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -29,7 +30,6 @@ export default async function handler(req, res) {
     res.setHeader('Set-Cookie', buildLoginCookie());
     res.status(200).json({ success: true });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '登入時發生錯誤' });
+    sendError(res, 500, err, '登入時發生錯誤');
   }
 }

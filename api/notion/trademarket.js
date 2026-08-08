@@ -1,5 +1,6 @@
 import { notion, getTitle, getMultiSelect, getSelect, getRichText, getDate, getUrl } from '../_lib/notionClient.js';
 import { requireAuth } from '../_lib/session.js';
+import { sendError } from '../_lib/errors.js';
 
 export default async function handler(req, res) {
   if (!requireAuth(req, res)) return;
@@ -45,6 +46,11 @@ function itemToProperties(body) {
 async function handleGet(req, res) {
   try {
     const dbId = process.env.NOTION_DB_TRADEMARKET;
+    if (!dbId) {
+      res.status(500).json({ error: '環境變數 NOTION_DB_TRADEMARKET 未設定，請檢查 Vercel 的 Environment Variables' });
+      return;
+    }
+
     const response = await notion.databases.query({
       database_id: dbId,
       sorts: [{ timestamp: 'created_time', direction: 'descending' }]
@@ -52,22 +58,25 @@ async function handleGet(req, res) {
     const items = response.results.map(pageToItem);
     res.status(200).json({ items });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '讀取交易市場資料失敗' });
+    sendError(res, 500, err, '讀取交易市場資料失敗');
   }
 }
 
 async function handleCreate(req, res) {
   try {
     const dbId = process.env.NOTION_DB_TRADEMARKET;
+    if (!dbId) {
+      res.status(500).json({ error: '環境變數 NOTION_DB_TRADEMARKET 未設定，請檢查 Vercel 的 Environment Variables' });
+      return;
+    }
+
     const page = await notion.pages.create({
       parent: { database_id: dbId },
       properties: itemToProperties(req.body || {})
     });
     res.status(200).json({ success: true, id: page.id });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '新增商品失敗' });
+    sendError(res, 500, err, '新增商品失敗');
   }
 }
 
@@ -84,8 +93,7 @@ async function handleUpdate(req, res) {
     });
     res.status(200).json({ success: true });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '更新商品失敗' });
+    sendError(res, 500, err, '更新商品失敗');
   }
 }
 
@@ -100,7 +108,6 @@ async function handleDelete(req, res) {
     await notion.pages.update({ page_id: id, archived: true });
     res.status(200).json({ success: true });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '刪除商品失敗' });
+    sendError(res, 500, err, '刪除商品失敗');
   }
 }

@@ -1,6 +1,7 @@
 import { notion, getCheckbox, getSelect, getMultiSelect, getDate, todayStr } from '../_lib/notionClient.js';
 import { readBlocksAsText, replaceBlocksWithText } from '../_lib/blocks.js';
 import { requireAuth } from '../_lib/session.js';
+import { sendError } from '../_lib/errors.js';
 
 export default async function handler(req, res) {
   if (!requireAuth(req, res)) return;
@@ -11,10 +12,20 @@ export default async function handler(req, res) {
   res.status(405).json({ error: 'Method not allowed' });
 }
 
+function getDbId(res) {
+  const dbId = process.env.NOTION_DB_JOURNAL;
+  if (!dbId) {
+    res.status(500).json({ error: '環境變數 NOTION_DB_JOURNAL 未設定，請檢查 Vercel 的 Environment Variables' });
+    return null;
+  }
+  return dbId;
+}
+
 // 查詢今天是否已有日記，若有就一併回傳內文
 async function handleGet(req, res) {
   try {
-    const dbId = process.env.NOTION_DB_JOURNAL;
+    const dbId = getDbId(res);
+    if (!dbId) return;
     const today = todayStr();
 
     const response = await notion.databases.query({
@@ -46,14 +57,14 @@ async function handleGet(req, res) {
       content
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '讀取星辰卷軸失敗' });
+    sendError(res, 500, err, '讀取星辰卷軸失敗');
   }
 }
 
 async function handleCreate(req, res) {
   try {
-    const dbId = process.env.NOTION_DB_JOURNAL;
+    const dbId = getDbId(res);
+    if (!dbId) return;
     const today = todayStr();
 
     // 防呆：即使前端邏輯正常，後端也再次確認今天是否已存在，避免重複新增
@@ -86,8 +97,7 @@ async function handleCreate(req, res) {
 
     res.status(200).json({ success: true, id: page.id });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '新增星辰卷軸失敗' });
+    sendError(res, 500, err, '新增星辰卷軸失敗');
   }
 }
 
@@ -116,7 +126,6 @@ async function handleUpdate(req, res) {
 
     res.status(200).json({ success: true });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '更新星辰卷軸失敗' });
+    sendError(res, 500, err, '更新星辰卷軸失敗');
   }
 }

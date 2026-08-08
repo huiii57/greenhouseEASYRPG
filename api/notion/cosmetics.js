@@ -1,5 +1,6 @@
 import { notion, getTitle, getRichText, getSelect } from '../_lib/notionClient.js';
 import { requireAuth } from '../_lib/session.js';
+import { sendError } from '../_lib/errors.js';
 
 const VISIBLE_STATUS = ['未拆封', '使用中', '快用完了'];
 
@@ -12,6 +13,11 @@ export default async function handler(req, res) {
 
   try {
     const dbId = process.env.NOTION_DB_COSMETICS;
+    if (!dbId) {
+      res.status(500).json({ error: '環境變數 NOTION_DB_COSMETICS 未設定，請檢查 Vercel 的 Environment Variables' });
+      return;
+    }
+
     const response = await notion.databases.query({
       database_id: dbId,
       filter: {
@@ -36,7 +42,6 @@ export default async function handler(req, res) {
 
     res.status(200).json({ items });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: '讀取化妝品資料失敗' });
+    sendError(res, 500, err, '讀取化妝品資料失敗');
   }
 }
