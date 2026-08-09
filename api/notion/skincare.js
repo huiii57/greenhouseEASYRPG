@@ -32,8 +32,8 @@ export default async function handler(req, res) {
       const p = page.properties;
       return {
         id: page.id,
-        品牌: getTitle(p['品牌']),
-        產品: getRichText(p['產品']),
+        品牌: getTitle(p['產品']),
+        產品: getRichText(p['品牌']),
         用途: getMultiSelect(p['用途']),
         容量: getRichText(p['容量']),
         特性: getMultiSelect(p['特性']),
