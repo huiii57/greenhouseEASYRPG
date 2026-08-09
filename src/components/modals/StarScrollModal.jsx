@@ -4,8 +4,8 @@ import TagMultiSelect from '../common/TagMultiSelect.jsx';
 import { journalApi } from '../../services/api.js';
 
 // 這兩份清單先給常見預設值，你可以依自己 Notion 資料庫實際的選項調整。
-const DRINK_OPTIONS = ['無', '手搖飲', '咖啡', '茶', '其他'];
-const TAG_OPTIONS = ['心情', '生活', '工作', '興趣', '健康'];
+const DRINK_OPTIONS = ['無糖', '沒喝', '含糖'];
+const TAG_OPTIONS = ['心情', '生活', '工作', '興趣', '健康', '價值觀', '想法'];
 
 export default function StarScrollModal({ onClose }) {
   const [loading, setLoading] = useState(true);
