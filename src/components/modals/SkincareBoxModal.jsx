@@ -12,19 +12,25 @@ export default function SkincareBoxModal({ onClose }) {
       {data && (
         <div className="card-list">
           {data.items.length === 0 && <p className="hint-text">目前沒有保養品在使用中。</p>}
-          {data.items.map((item) => (
-            <div key={item.id} className="item-card">
-              <div className="item-card__title">
-                {item.品牌} {item.產品}
-              </div>
-              <div className="item-card__meta">
-                {item.用途 && <span>用途：{item.用途}</span>}
-                {item.容量 && <span>容量：{item.容量}</span>}
-                {item.特性 && <span>特性：{item.特性}</span>}
-              </div>
-              <span className={`status-badge status-badge--${item.狀態}`}>{item.狀態}</span>
-            </div>
-          ))}
+          // 1. 在 map 之前，先把資料依「用途」分組
+const grouped = data.items.reduce((acc, item) => {
+  const key = item.用途 || '其他';
+  if (!acc[key]) acc[key] = [];
+  acc[key].push(item);
+  return acc;
+}, {});
+
+// 2. 渲染時改成先跑分組的 key，再跑該組底下的 items
+{Object.entries(grouped).map(([用途, items]) => (
+  <div key={用途}>
+    <h3 className="group-title">【{用途}】</h3>
+    {items.map((item) => (
+      <div key={item.id} className="item-card">
+        {/* 原本卡片內容不用動 */}
+      </div>
+    ))}
+  </div>
+))}
         </div>
       )}
     </ModalShell>
