@@ -80,7 +80,7 @@ export default function TradeMarketModal({ onClose }) {
       await trademarketApi.remove(item.id);
       setData((prev) => ({ items: prev.items.filter((i) => i.id !== item.id) }));
     } catch (err) {
-      alert(`刪除失敗：${err.message}`);
+      alert(err.message);
     }
   }
 

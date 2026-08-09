@@ -7,6 +7,7 @@ export default function BookshelfModal({ onClose }) {
   const { data, loading, error } = useNotionResource(bookshelfApi.list);
   const [selected, setSelected] = useState(null); // 選中的書籍 item
   const [content, setContent] = useState('');
+  const [hasUnsupported, setHasUnsupported] = useState(false);
   const [contentLoading, setContentLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
@@ -18,6 +19,7 @@ export default function BookshelfModal({ onClose }) {
     try {
       const res = await bookshelfApi.getContent(item.id);
       setContent(res.content || '');
+      setHasUnsupported(!!res.hasUnsupported);
     } catch (err) {
       setSaveMsg(`讀取內文失敗：${err.message}`);
     } finally {
@@ -48,18 +50,27 @@ export default function BookshelfModal({ onClose }) {
           <p className="hint-text">讀取內文中…</p>
         ) : (
           <>
+            {hasUnsupported && (
+              <p className="warning-text">
+                這個頁面裡含有資料庫、表格等無法安全線上編輯的內容，為了避免不小心刪掉這些內容，這裡改成唯讀顯示。
+                如果要修改，請直接到 Notion 開啟這個頁面編輯。
+              </p>
+            )}
             <textarea
               className="content-textarea"
               value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={14}
+              onChange={(e) => !hasUnsupported && setContent(e.target.value)}
+              readOnly={hasUnsupported}
+              rows={16}
             />
-            <div className="modal-actions">
-              <button type="button" onClick={handleSave} disabled={saving}>
-                {saving ? '儲存中…' : '儲存內文'}
-              </button>
-              {saveMsg && <span className="hint-text">{saveMsg}</span>}
-            </div>
+            {!hasUnsupported && (
+              <div className="modal-actions">
+                <button type="button" onClick={handleSave} disabled={saving}>
+                  {saving ? '儲存中…' : '儲存內文'}
+                </button>
+                {saveMsg && <span className="hint-text">{saveMsg}</span>}
+              </div>
+            )}
           </>
         )}
       </ModalShell>

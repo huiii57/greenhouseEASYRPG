@@ -25,7 +25,7 @@ export default function NoticeBoardModal({ onClose }) {
         const key = item.date ? 'todayOrOverdue' : 'noDate';
         return { ...prev, [key]: [...prev[key], item] };
       });
-      alert(`更新失敗：${err.message}`);
+      alert(err.message);
     } finally {
       setPendingIds((prev) => {
         const next = new Set(prev);
@@ -55,7 +55,7 @@ export default function NoticeBoardModal({ onClose }) {
         <div className="task-list">
           {list.length === 0 && <p className="hint-text">這裡目前沒有任務，休息一下吧。</p>}
           {list.map((item) => (
-            <label key={item.id} className="task-row">
+            <div key={item.id} className="task-row">
               <input
                 type="checkbox"
                 checked={item.Done}
@@ -65,7 +65,7 @@ export default function NoticeBoardModal({ onClose }) {
               <span className="task-row__name">{item.Name}</span>
               {typeof item.EXP === 'number' && <span className="task-row__exp">+{item.EXP} EXP</span>}
               {item.date && <span className="task-row__date">{item.date}</span>}
-            </label>
+            </div>
           ))}
         </div>
       )}
