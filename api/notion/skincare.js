@@ -1,4 +1,4 @@
-import { notion, getTitle, getRichText, getSelect } from '../_lib/notionClient.js';
+import {  notion,  getTitle,  getRichText,  getSelect,  getMultiSelect} from '../_lib/notionClient.js';
 import { requireAuth } from '../_lib/session.js';
 import { sendError } from '../_lib/errors.js';
 
@@ -32,11 +32,11 @@ export default async function handler(req, res) {
       const p = page.properties;
       return {
         id: page.id,
-        品牌: getRichText(p['品牌']) || getSelect(p['品牌']) || getTitle(p['品牌']),
-        產品: getTitle(p['產品']) || getRichText(p['產品']),
-        用途: getRichText(p['用途']) || getSelect(p['用途']),
+        品牌: getTitle(p['品牌']),
+        產品: getRichText(p['產品']),
+        用途: getMultiSelect(p['用途']),
         容量: getRichText(p['容量']),
-        特性: getRichText(p['特性']),
+        特性: getMultiSelect(p['特性']),
         狀態: getSelect(p['狀態'])
       };
     });
