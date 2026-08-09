@@ -340,7 +340,7 @@ button {
 }
 
 /* ---------- 卡片列表 ---------- */
-.group-title { margin: 16px 0 8px; font-size: 15px; }
+
 .card-list {
   display: flex;
   flex-direction: column;
@@ -565,3 +565,5 @@ button {
   font-size: 13px;
   color: var(--color-danger);
 }
+/* 保養品化妝品卡片顯示 */
+.group-title { margin: 16px 0 8px; font-size: 15px; }
