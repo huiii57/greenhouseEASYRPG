@@ -124,14 +124,21 @@ button {
   padding: 24px;
 }
 
-.scene-canvas {
+.scene-viewport {
   position: relative;
   width: min(100%, 1600px);
-  max-height: 90vh;
+  aspect-ratio: 1600 / 900;
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-soft);
   background: #d8dfc4; /* 背景圖尚未放入前的暫用底色 */
+}
+
+.scene-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
 }
 
 .scene-bg {
@@ -565,5 +572,13 @@ button {
   font-size: 13px;
   color: var(--color-danger);
 }
-/* 保養品化妝品卡片顯示 */
-.group-title { margin: 16px 0 8px; font-size: 15px; }
+
+.warning-text {
+  font-size: 13px;
+  color: var(--color-wood-dark);
+  background: rgba(232, 184, 75, 0.25);
+  border: 1px solid var(--color-sunlight);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+}
