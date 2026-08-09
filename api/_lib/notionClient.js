@@ -53,3 +53,14 @@ export function todayStr() {
   const d = String(now.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
 }
+
+// 防呆：環境變數常見的貼值錯誤——多了前後空白/換行，或直接貼了整個 Notion 網址
+// （例如 https://www.notion.so/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?v=...）
+// 而不是純粹 32 碼的 database ID。這裡自動把多餘的部分清掉，
+// 避免 Notion SDK 組出不合法的 request URL（錯誤訊息會是 "Invalid request URL."）。
+export function normalizeDatabaseId(raw) {
+  if (!raw) return raw;
+  const trimmed = raw.trim();
+  const match = trimmed.match(/[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}/);
+  return match ? match[0] : trimmed;
+}
