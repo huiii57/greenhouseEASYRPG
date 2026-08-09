@@ -3,6 +3,8 @@ import { requireAuth } from '../_lib/session.js';
 import { sendError } from '../_lib/errors.js';
 
 // 書櫃內文讀取／編輯（GET ?pageId=xxx, PATCH {pageId, content}）
+// GET 現在會多回傳 hasUnsupported：true 代表頁面裡有資料庫/表格等無法安全編輯的內容，
+// 前端遇到這個狀況會切換成唯讀模式，不會顯示存檔按鈕。
 
 export default async function handler(req, res) {
   if (!requireAuth(req, res)) return;
@@ -23,8 +25,8 @@ async function handleGet(req, res) {
       res.status(400).json({ error: '缺少 pageId' });
       return;
     }
-    const content = await readBlocksAsText(pageId);
-    res.status(200).json({ content });
+    const { content, hasUnsupported } = await readBlocksAsText(pageId);
+    res.status(200).json({ content, hasUnsupported });
   } catch (err) {
     sendError(res, 500, err, '讀取內文失敗');
   }

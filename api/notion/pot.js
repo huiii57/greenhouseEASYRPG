@@ -1,4 +1,4 @@
-import { notion, getNumber, getDate, todayStr } from '../_lib/notionClient.js';
+import { notion, getNumber, getDate, todayStr , normalizeDatabaseId } from '../_lib/notionClient.js';
 import { requireAuth } from '../_lib/session.js';
 import { sendError } from '../_lib/errors.js';
 
@@ -39,7 +39,7 @@ async function getOrCreateLogPage(dbId) {
 export default async function handler(req, res) {
   if (!requireAuth(req, res)) return;
 
-  const dbId = process.env.NOTION_DB_GREENHOUSE_LOG;
+  const dbId = normalizeDatabaseId(process.env.NOTION_DB_GREENHOUSE_LOG);
   if (!dbId) {
     res.status(500).json({ error: '環境變數 NOTION_DB_GREENHOUSE_LOG 未設定，請檢查 Vercel 的 Environment Variables' });
     return;

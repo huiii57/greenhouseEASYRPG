@@ -1,4 +1,4 @@
-import { notion, getTitle, getNumber, getCheckbox, getDate, todayStr } from '../_lib/notionClient.js';
+import { notion, getTitle, getNumber, getCheckbox, getDate, todayStr , normalizeDatabaseId } from '../_lib/notionClient.js';
 import { requireAuth } from '../_lib/session.js';
 import { sendError } from '../_lib/errors.js';
 
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
 async function handleGet(req, res) {
   try {
-    const dbId = process.env.NOTION_DB_TASKS;
+    const dbId = normalizeDatabaseId(process.env.NOTION_DB_TASKS);
     if (!dbId) {
       res.status(500).json({ error: '環境變數 NOTION_DB_TASKS 未設定，請檢查 Vercel 的 Environment Variables' });
       return;
@@ -43,7 +43,7 @@ async function handleGet(req, res) {
       const p = page.properties;
       const item = {
         id: page.id,
-        Name: getTitle(p['任務']),
+        Name: getTitle(p['Name']),
         EXP: getNumber(p['EXP']),
         Done: getCheckbox(p['Done']),
         date: getDate(p['日期'] ?? p['Date'])

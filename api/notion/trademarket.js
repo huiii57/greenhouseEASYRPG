@@ -1,4 +1,4 @@
-import { notion, getTitle, getMultiSelect, getSelect, getRichText, getDate, getUrl } from '../_lib/notionClient.js';
+import { notion, getTitle, getMultiSelect, getSelect, getRichText, getDate, getUrl , normalizeDatabaseId } from '../_lib/notionClient.js';
 import { requireAuth } from '../_lib/session.js';
 import { sendError } from '../_lib/errors.js';
 
@@ -45,7 +45,7 @@ function itemToProperties(body) {
 
 async function handleGet(req, res) {
   try {
-    const dbId = process.env.NOTION_DB_TRADEMARKET;
+    const dbId = normalizeDatabaseId(process.env.NOTION_DB_TRADEMARKET);
     if (!dbId) {
       res.status(500).json({ error: '環境變數 NOTION_DB_TRADEMARKET 未設定，請檢查 Vercel 的 Environment Variables' });
       return;
@@ -64,7 +64,7 @@ async function handleGet(req, res) {
 
 async function handleCreate(req, res) {
   try {
-    const dbId = process.env.NOTION_DB_TRADEMARKET;
+    const dbId = normalizeDatabaseId(process.env.NOTION_DB_TRADEMARKET);
     if (!dbId) {
       res.status(500).json({ error: '環境變數 NOTION_DB_TRADEMARKET 未設定，請檢查 Vercel 的 Environment Variables' });
       return;

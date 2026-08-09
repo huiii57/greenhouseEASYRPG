@@ -1,4 +1,4 @@
-import { notion, getCheckbox, getSelect, getMultiSelect, getDate, todayStr } from '../_lib/notionClient.js';
+import { notion, getCheckbox, getSelect, getMultiSelect, getDate, todayStr, normalizeDatabaseId } from '../_lib/notionClient.js';
 import { readBlocksAsText, replaceBlocksWithText } from '../_lib/blocks.js';
 import { requireAuth } from '../_lib/session.js';
 import { sendError } from '../_lib/errors.js';
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 }
 
 function getDbId(res) {
-  const dbId = process.env.NOTION_DB_JOURNAL;
+  const dbId = normalizeDatabaseId(process.env.NOTION_DB_JOURNAL);
   if (!dbId) {
     res.status(500).json({ error: '環境變數 NOTION_DB_JOURNAL 未設定，請檢查 Vercel 的 Environment Variables' });
     return null;
@@ -43,7 +43,7 @@ async function handleGet(req, res) {
 
     const page = response.results[0];
     const p = page.properties;
-    const content = await readBlocksAsText(page.id);
+    const { content, hasUnsupported } = await readBlocksAsText(page.id);
 
     res.status(200).json({
       exists: true,
@@ -54,7 +54,8 @@ async function handleGet(req, res) {
       運動: getCheckbox(p['運動']),
       飲料: getSelect(p['飲料']),
       TAG: getMultiSelect(p['TAG']),
-      content
+      content,
+      hasUnsupported
     });
   } catch (err) {
     sendError(res, 500, err, '讀取星辰卷軸失敗');
